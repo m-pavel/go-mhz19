@@ -5,6 +5,8 @@ import (
 
 	"errors"
 
+	"fmt"
+
 	"github.com/jacobsa/go-serial/serial"
 )
 
@@ -52,6 +54,8 @@ func (s *serialMhz19) Read() (*Readings, error) {
 		return nil, err
 	}
 
+	fmt.Println(n)
+	fmt.Println(buffer)
 	if n != 9 {
 		return nil, errors.New("Wrong readings")
 	}
