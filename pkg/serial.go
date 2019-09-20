@@ -15,7 +15,7 @@ const (
 	abc_on               = "\xff\x01\x79\xa0\x00\x00\x00\x00\xe6"
 	abc_off              = "\xff\x01\x79\x00\x00\x00\x00\x00\x86"
 	zero_point_cal       = "\xff\x01\x87\x00\x00\x00\x00\x00\x78"
-	span_point_cal =       "\xff\x01\x88\x00\x00\x00\x00\x00\x00"
+	span_point_cal       = "\xff\x01\x88\x00\x00\x00\x00\x00\x00"
 	detection_range_5000 = "\xff\x01\x99\x00\x00\x00\x13\x88\xcb"
 	detection_range_2000 = "\xff\x01\x99\x00\x00\x00\x07\xd0\x8F"
 )
@@ -55,13 +55,13 @@ func (s *serialMhz19) Read() (*Readings, error) {
 		return nil, err
 	}
 
-	buffer := make([]uint8, 8)
+	buffer := make([]uint8, 9)
 	time.Sleep(500 * time.Millisecond)
 	if n, err = s.port.Read(buffer); err != nil {
 		return nil, err
 	}
 
-	if n != 8 {
+	if n != 9 {
 		return nil, errors.New("Wrong readings (Size)")
 	}
 
@@ -90,15 +90,21 @@ func (s *serialMhz19) Abc(on bool) error {
 	return err
 }
 
-func (s *serialMhz19) SpanPointCalibration(span int) error {
-	request = span_point_cal
+func (s *serialMhz19) SpanPointCalibration(span byte) error {
+	_, err := s.port.Write(s.spanRequest(span))
+	return err
+}
+
+func  (s *serialMhz19) spanRequest(span byte) []byte {
+	request := []byte(span_point_cal)
 	request[3] = span << 8
-	request[4] = span % 256
-	request[8] = 0xff - (sum(array) % 0x100) + 1
+	request[4] = byte(int(span) % 256)
+	request[8] = 0xff - byte(int(0x01 + 0x88 + request[3] + request[4]) % 0x100) + 1
+	return request
 }
 
 func (s *serialMhz19) ZeroPointCalibration(span int) error {
-	_, err := s.port.Write([]byte(zerro_point_cal))
+	_, err := s.port.Write([]byte(zero_point_cal))
 	return err
 }
 
