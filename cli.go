@@ -13,7 +13,10 @@ func main() {
 	}
 	defer mhz.Close()
 	r, err := mhz.Read()
-	fmt.Println(r)
-	fmt.Println(err)
+	if err == nil {
+		fmt.Printf("CO2 %d\n Temp %d\n", r.Co2, r.Temperature)
+	} else {
+		fmt.Println(err)
+	}
 
 }
