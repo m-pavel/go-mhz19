@@ -48,7 +48,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 	if n, err = s.port.Write([]byte(readings)); err != nil {
 		return nil, err
 	}
-	buffer := make([]byte, 9)
+	buffer := make([]byte, 8)
 
 	if n, err = s.port.Read(buffer); err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 
 	fmt.Println(n)
 	fmt.Println(buffer)
-	if n != 9 {
+	if n != 8 {
 		return nil, errors.New("Wrong readings")
 	}
 
