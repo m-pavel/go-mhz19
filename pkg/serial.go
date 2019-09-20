@@ -5,13 +5,19 @@ import (
 
 	"errors"
 
-	"fmt"
+	"time"
 
 	"github.com/jacobsa/go-serial/serial"
 )
 
 const (
-	readings = "\xff\x01\x86\x00\x00\x00\x00\x00\x79"
+	readings             = "\xff\x01\x86\x00\x00\x00\x00\x00\x79"
+	abc_on               = "\xff\x01\x79\xa0\x00\x00\x00\x00\xe6"
+	abc_off              = "\xff\x01\x79\x00\x00\x00\x00\x00\x86"
+	zero_point_cal       = "\xff\x01\x87\x00\x00\x00\x00\x00\x78"
+	span_point_cal =       "\xff\x01\x88\x00\x00\x00\x00\x00\x00"
+	detection_range_5000 = "\xff\x01\x99\x00\x00\x00\x13\x88\xcb"
+	detection_range_2000 = "\xff\x01\x99\x00\x00\x00\x07\xd0\x8F"
 )
 
 type serialMhz19 struct {
@@ -48,29 +54,62 @@ func (s *serialMhz19) Read() (*Readings, error) {
 	if n, err = s.port.Write([]byte(readings)); err != nil {
 		return nil, err
 	}
-	buffer := make([]byte, 8)
 
+	buffer := make([]uint8, 8)
+	time.Sleep(500 * time.Millisecond)
 	if n, err = s.port.Read(buffer); err != nil {
 		return nil, err
 	}
 
-	fmt.Println(n)
-	fmt.Println(buffer)
 	if n != 8 {
-		return nil, errors.New("Wrong readings")
+		return nil, errors.New("Wrong readings (Size)")
 	}
 
-	if buffer[0] == '\xff' && buffer[1] == '\x86' {
+	if buffer[0] == 0xff && buffer[1] == 0x86 {
 		return &Readings{
-			Co2:         int(buffer[2])*256 + int(buffer[3]),
-			Temperature: int(buffer[4]) - 40,
+			Co2:         int(buffer[2])<<8 + int(buffer[3]),
+			Temperature: int(buffer[4]) - 0x28,
 			Tt:          int(buffer[4]),
 			Ss:          int(buffer[5]),
-			UhUl:        int(buffer[6])*256 + int(buffer[7]),
+			UhUl:        int(buffer[6])<<8 + int(buffer[7]),
 		}, nil
 	} else {
-		return nil, errors.New("Wrong readings")
+		return nil, errors.New("Wrong readings (Farmat)")
 	}
+}
+
+func (s *serialMhz19) Abc(on bool) error {
+	var request []byte
+	if on {
+		request = []byte(abc_on)
+	} else {
+		request = []byte(abc_off)
+	}
+
+	_, err := s.port.Write(request)
+	return err
+}
+
+func (s *serialMhz19) SpanPointCalibration(span int) error {
+	request = span_point_cal
+	request[3] = span << 8
+	request[4] = span % 256
+	request[8] = 0xff - (sum(array) % 0x100) + 1
+}
+
+func (s *serialMhz19) ZeroPointCalibration(span int) error {
+	_, err := s.port.Write([]byte(zerro_point_cal))
+	return err
+}
+
+func (s *serialMhz19) DetectionRange5000(span int) error {
+	_, err := s.port.Write([]byte(detection_range_5000))
+	return err
+}
+
+func (s *serialMhz19) DetectionRange2000(span int) error {
+	_, err := s.port.Write([]byte(detection_range_2000))
+	return err
 }
 
 func NewSerial(device ...string) Mhz19 {
