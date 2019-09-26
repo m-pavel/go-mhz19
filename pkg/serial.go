@@ -66,7 +66,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 	}
 
 	if n != 9 {
-		return nil, errors.New(fmt.Sprintf("Wrong readings (Size %d): %s", n, string(buffer)))
+		return nil, errors.New(fmt.Sprintf("Wrong readings (Size %d): %v", n, buffer))
 	}
 
 	if buffer[0] == 0xff && buffer[1] == 0x86 {
@@ -78,7 +78,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 			UhUl:        int(buffer[6])<<8 + int(buffer[7]),
 		}, nil
 	} else {
-		return nil, errors.New(fmt.Sprintf("Wrong readings (Format): %s", string(buffer)))
+		return nil, errors.New(fmt.Sprintf("Wrong readings (Format): %v", buffer))
 	}
 }
 
