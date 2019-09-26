@@ -60,7 +60,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 	}
 
 	buffer := make([]uint8, 9)
-	time.Sleep(600 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 	if n, err = s.port.Read(buffer); err != nil {
 		return nil, err
 	}
