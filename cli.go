@@ -5,6 +5,8 @@ import (
 
 	"flag"
 
+	"log"
+
 	"github.com/m-pavel/go-mhz19/pkg"
 )
 
@@ -13,7 +15,7 @@ func main() {
 	flag.Parse()
 	mhz := mhz19.NewSerial(*device)
 	if err := mhz.Open(); err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	defer mhz.Close()
 	r, err := mhz.Read()
