@@ -20,6 +20,8 @@ const (
 	span_point_cal       = "\xff\x01\x88\x00\x00\x00\x00\x00\x00"
 	detection_range_5000 = "\xff\x01\x99\x00\x00\x00\x13\x88\xcb"
 	detection_range_2000 = "\xff\x01\x99\x00\x00\x00\x07\xd0\x8F"
+
+	default_device = "/dev/serial0"
 )
 
 type serialMhz19 struct {
@@ -125,7 +127,7 @@ func NewSerial(device ...string) Mhz19 {
 	if len(device) == 1 {
 		sm.dev = device[0]
 	} else {
-		sm.dev = "/dev/serial0"
+		sm.dev = default_device
 	}
 	return &sm
 }
