@@ -7,6 +7,8 @@ import (
 
 	"time"
 
+	"fmt"
+
 	"github.com/jacobsa/go-serial/serial"
 )
 
@@ -62,7 +64,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 	}
 
 	if n != 9 {
-		return nil, errors.New("Wrong readings (Size)")
+		return nil, errors.New(fmt.Sprintf("Wrong readings (Size %d)", n))
 	}
 
 	if buffer[0] == 0xff && buffer[1] == 0x86 {
@@ -74,7 +76,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 			UhUl:        int(buffer[6])<<8 + int(buffer[7]),
 		}, nil
 	} else {
-		return nil, errors.New("Wrong readings (Farmat)")
+		return nil, errors.New("Wrong readings (Format)")
 	}
 }
 
@@ -95,11 +97,11 @@ func (s *serialMhz19) SpanPointCalibration(span byte) error {
 	return err
 }
 
-func  (s *serialMhz19) spanRequest(span byte) []byte {
+func (s *serialMhz19) spanRequest(span byte) []byte {
 	request := []byte(span_point_cal)
 	request[3] = span << 8
 	request[4] = byte(int(span) % 256)
-	request[8] = 0xff - byte(int(0x01 + 0x88 + request[3] + request[4]) % 0x100) + 1
+	request[8] = 0xff - byte(int(0x01+0x88+request[3]+request[4])%0x100) + 1
 	return request
 }
 
