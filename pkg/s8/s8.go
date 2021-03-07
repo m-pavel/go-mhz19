@@ -59,17 +59,9 @@ func (s *serialS8) Read() (*co2.Readings, error) {
 		return nil, errors.New(fmt.Sprintf("Wrong readings (Size %d): %v", n, buffer))
 	}
 
-	if buffer[0] == 0xff && buffer[1] == 0x86 {
-		return &co2.Readings{
-			Co2:         int(buffer[2])<<8 + int(buffer[3]),
-			Temperature: int(buffer[4]) - 0x28,
-			Tt:          int(buffer[4]),
-			Ss:          int(buffer[5]),
-			UhUl:        int(buffer[6])<<8 + int(buffer[7]),
-		}, nil
-	} else {
-		return nil, errors.New(fmt.Sprintf("Wrong readings (Format): %v", buffer))
-	}
+	return &co2.Readings{
+		Co2:         int(buffer[3])<<8 + int(buffer[4]),
+	}, nil
 }
 
 func NewSerial(device ...string) co2.Device {
