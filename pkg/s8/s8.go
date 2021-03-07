@@ -49,13 +49,13 @@ func (s *serialS8) Read() (*co2.Readings, error) {
 		return nil, err
 	}
 
-	buffer := make([]uint8, 9)
+	buffer := make([]uint8, 7)
 	time.Sleep(500 * time.Millisecond)
 	if n, err = s.port.Read(buffer); err != nil {
 		return nil, err
 	}
 
-	if n != 9 {
+	if n != 7 {
 		return nil, errors.New(fmt.Sprintf("Wrong readings (Size %d): %v", n, buffer))
 	}
 
