@@ -1,6 +1,7 @@
 package mhz19
 
 import (
+	co2 "github.com/m-pavel/go-co2/pkg"
 	"io"
 
 	"errors"
@@ -52,7 +53,7 @@ func (s *serialMhz19) Close() error {
 	}
 	return err
 }
-func (s *serialMhz19) Read() (*Readings, error) {
+func (s *serialMhz19) Read() (*co2.Readings, error) {
 	var n int
 	var err error
 	if n, err = s.port.Write([]byte(readings)); err != nil {
@@ -70,7 +71,7 @@ func (s *serialMhz19) Read() (*Readings, error) {
 	}
 
 	if buffer[0] == 0xff && buffer[1] == 0x86 {
-		return &Readings{
+		return &co2.Readings{
 			Co2:         int(buffer[2])<<8 + int(buffer[3]),
 			Temperature: int(buffer[4]) - 0x28,
 			Tt:          int(buffer[4]),
@@ -122,7 +123,7 @@ func (s *serialMhz19) DetectionRange2000(span int) error {
 	return err
 }
 
-func NewSerial(device ...string) Mhz19 {
+func NewSerial(device ...string) co2.Device {
 	sm := serialMhz19{}
 	if len(device) == 1 {
 		sm.dev = device[0]

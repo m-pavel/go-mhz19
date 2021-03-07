@@ -1,11 +1,10 @@
-package mhz19
+package co2
 
-type Mhz19 interface {
+type Device interface {
 	Open() error
 	Close() error
 	Read() (*Readings, error)
 	Abc(bool) error
-	
 }
 
 type Readings struct {

@@ -1,7 +1,7 @@
 build:
-	go build -o ./mhz19-cli .
-	go build -o ./mhz19-mqtt ./mqtt
+	go build -o ./co2-cli .
+	go build -o ./co2-mqtt ./mqtt
 
 clean:
-	rm -rf mhz19-cli
-	rm -rf mhz19-mqtt
+	rm -rf co2-cli
+	rm -rf co2-mqtt
