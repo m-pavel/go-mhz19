@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	co2 "github.com/m-pavel/go-co2/pkg"
+	"github.com/m-pavel/go-co2/pkg/s8"
 
 	"github.com/m-pavel/go-hassio-mqtt/pkg"
 	"github.com/m-pavel/go-co2/pkg/mhz19"
@@ -26,7 +27,7 @@ func (ts *Co2Service) Init(ctx *ghm.ServiceContext) error {
 	case "mhz19":
 		ts.d = mhz19.NewSerial(*ts.device)
 	case "s8":
-		ts.d = nil
+		ts.d = s8.NewSerial(*ts.device)
 	default:
 		panic("Wrong device type" + *ts.dtype)
 	}

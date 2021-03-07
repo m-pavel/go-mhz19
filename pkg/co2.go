@@ -4,7 +4,7 @@ type Device interface {
 	Open() error
 	Close() error
 	Read() (*Readings, error)
-	Abc(bool) error
+
 }
 
 type Readings struct {

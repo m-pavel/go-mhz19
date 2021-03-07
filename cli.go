@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	co22 "github.com/m-pavel/go-co2/pkg"
+	"github.com/m-pavel/go-co2/pkg/s8"
 
 	"flag"
 
@@ -12,13 +14,24 @@ import (
 
 func main() {
 	device := flag.String("device", "/dev/serial0", "Serial device")
+	dtype := flag.String("type", "mzh19", "mzh19 or s8")
 	flag.Parse()
-	mhz := mhz19.NewSerial(*device)
-	if err := mhz.Open(); err != nil {
+
+	var co2d co22.Device
+	switch *dtype {
+	case "mhz19":
+		co2d = mhz19.NewSerial(*device)
+	case "s8":
+		co2d = s8.NewSerial(*device)
+	default:
+		panic("Wrong device type" + *dtype)
+	}
+
+	if err := co2d.Open(); err != nil {
 		log.Panic(err)
 	}
-	defer mhz.Close()
-	r, err := mhz.Read()
+	defer co2d.Close()
+	r, err := co2d.Read()
 	if err == nil {
 		fmt.Printf("CO2 %d ppm\nTemp %d C\n", r.Co2, r.Temperature)
 	} else {
