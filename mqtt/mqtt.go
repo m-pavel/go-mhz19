@@ -18,7 +18,7 @@ type Co2Service struct {
 
 func (ts *Co2Service) PrepareCommandLineParams() {
 	ts.device = flag.String("device", "/dev/serial0", "Serial device")
-	ts.dtype = flag.String("type", "mzh19", "mzh19 or s8")
+	ts.dtype = flag.String("type", "mhz19", "mhz19 or s8")
 }
 func (ts Co2Service) Name() string { return "co2" }
 
@@ -29,7 +29,7 @@ func (ts *Co2Service) Init(ctx *ghm.ServiceContext) error {
 	case "s8":
 		ts.d = s8.NewSerial(*ts.device)
 	default:
-		panic("Wrong device type" + *ts.dtype)
+		panic("Wrong device type " + *ts.dtype)
 	}
 	return ts.d.Open()
 }

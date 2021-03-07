@@ -14,7 +14,7 @@ import (
 
 func main() {
 	device := flag.String("device", "/dev/serial0", "Serial device")
-	dtype := flag.String("type", "mzh19", "mzh19 or s8")
+	dtype := flag.String("type", "mhz19", "mhz19 or s8")
 	flag.Parse()
 
 	var co2d co22.Device
@@ -24,7 +24,7 @@ func main() {
 	case "s8":
 		co2d = s8.NewSerial(*device)
 	default:
-		panic("Wrong device type" + *dtype)
+		panic("Wrong device type " + *dtype)
 	}
 
 	if err := co2d.Open(); err != nil {
