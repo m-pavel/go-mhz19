@@ -4,7 +4,7 @@ import (
 	"flag"
 
 	"github.com/m-pavel/go-hassio-mqtt/pkg"
-	"github.com/m-pavel/go-mhz19/pkg"
+	"github.com/m-pavel/go-co2/pkg/mhz19"
 )
 
 type Co2Service struct {

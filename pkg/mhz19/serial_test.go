@@ -1,8 +1,8 @@
 package mhz19
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func Test1(t *testing.T) {

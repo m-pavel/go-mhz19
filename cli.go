@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	"github.com/m-pavel/go-mhz19/pkg"
+	"github.com/m-pavel/go-co2/pkg/mhz19"
 )
 
 func main() {
