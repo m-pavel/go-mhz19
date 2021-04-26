@@ -30,6 +30,7 @@ func main() {
 	if err := co2d.Open(); err != nil {
 		log.Panic(err)
 	}
+	log.Printf("Opened %s", *device)
 	defer co2d.Close()
 	r, err := co2d.Read()
 	if err == nil {

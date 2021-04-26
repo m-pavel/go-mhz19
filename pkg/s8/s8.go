@@ -17,9 +17,10 @@ const (
 type serialS8 struct {
 	dev  string
 	port io.ReadWriteCloser
+	timeout time.Duration
 }
 
-func (s *serialS8) Open() error {
+func (s *serialS8) Open(timeout time.Duration) error {
 	options := serial.OpenOptions{
 		PortName:        s.dev,
 		BaudRate:        9600,
@@ -31,6 +32,7 @@ func (s *serialS8) Open() error {
 
 	var err error
 	s.port, err = serial.Open(options)
+	s.timeout = timeout
 	return err
 }
 
@@ -42,26 +44,56 @@ func (s *serialS8) Close() error {
 	}
 	return err
 }
+
+
 func (s *serialS8) Read() (*co2.Readings, error) {
 	var n int
 	var err error
-	if n, err = s.port.Write([]byte(readings)); err != nil {
-		return nil, err
+	ch := make(chan *co2.ReadingsResponse)
+
+	go func() {
+		if n, err = s.port.Write([]byte(readings)); err != nil {
+			ch <- &co2.ReadingsResponse{E: err}
+		} else {
+			ch <- &co2.ReadingsResponse{}
+		}
+	}()
+
+	var wr *co2.ReadingsResponse
+
+	select {
+	case r := <- ch:
+		wr = r
+	case <-time.After(s.timeout):
+		return nil, errors.New("Write timeout")
 	}
 
-	buffer := make([]uint8, 7)
+	if wr.E != nil {
+		return nil, wr.E
+	}
+
 	time.Sleep(500 * time.Millisecond)
-	if n, err = s.port.Read(buffer); err != nil {
-		return nil, err
-	}
 
-	if n != 7 {
-		return nil, errors.New(fmt.Sprintf("Wrong readings (Size %d): %v", n, buffer))
+	go func() {
+		buffer := make([]uint8, 7)
+		if n, err = s.port.Read(buffer); err != nil {
+			wr = &co2.ReadingsResponse{E: err}
+		} else {
+			if n != 7 {
+				wr = &co2.ReadingsResponse{E: errors.New(fmt.Sprintf("Wrong readings (Size %d): %v", n, buffer))}
+			} else {
+				wr = &co2.ReadingsResponse{R: &co2.Readings{
+					Co2:         int(buffer[3])<<8 + int(buffer[4]),
+				}}
+			}
+		}
+	}()
+	select {
+	case r := <- ch:
+		return r.R, r.E
+	case <-time.After(s.timeout):
+		return nil, errors.New("Read timeout")
 	}
-
-	return &co2.Readings{
-		Co2:         int(buffer[3])<<8 + int(buffer[4]),
-	}, nil
 }
 
 func NewSerial(device ...string) co2.Device {

@@ -28,9 +28,10 @@ const (
 type serialMhz19 struct {
 	dev  string
 	port io.ReadWriteCloser
+	timeout time.Duration
 }
 
-func (s *serialMhz19) Open() error {
+func (s *serialMhz19) Open(timeout time.Duration) error {
 	options := serial.OpenOptions{
 		PortName:        s.dev,
 		BaudRate:        9600,
@@ -42,6 +43,7 @@ func (s *serialMhz19) Open() error {
 
 	var err error
 	s.port, err = serial.Open(options)
+	s.timeout = timeout
 	return err
 }
 
@@ -53,6 +55,8 @@ func (s *serialMhz19) Close() error {
 	}
 	return err
 }
+
+// TODO timeouts
 func (s *serialMhz19) Read() (*co2.Readings, error) {
 	var n int
 	var err error
