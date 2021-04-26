@@ -24,10 +24,11 @@ func (s *serialS8) Open(timeout time.Duration) error {
 	options := serial.OpenOptions{
 		PortName:        s.dev,
 		BaudRate:        9600,
-		DataBits:        8,
-		StopBits:        1,
-		MinimumReadSize: 4,
-		ParityMode:      serial.PARITY_NONE,
+		
+		//DataBits:        8,
+		//StopBits:        1,
+		//MinimumReadSize: 4,
+		//ParityMode:      serial.PARITY_NONE,
 	}
 
 	var err error
@@ -55,7 +56,11 @@ func (s *serialS8) Read() (*co2.Readings, error) {
 		if n, err = s.port.Write([]byte(readings)); err != nil {
 			ch <- &co2.ReadingsResponse{E: err}
 		} else {
-			ch <- &co2.ReadingsResponse{}
+			if n != 7 {
+				ch <-  &co2.ReadingsResponse{E: errors.New(fmt.Sprintf("Wrong writings : %d", n))}
+			} else {
+				ch <- &co2.ReadingsResponse{}
+			}
 		}
 	}()
 
@@ -65,7 +70,7 @@ func (s *serialS8) Read() (*co2.Readings, error) {
 	case r := <- ch:
 		wr = r
 	case <-time.After(s.timeout):
-		return nil, errors.New("Write timeout")
+		return nil, errors.New("write timeout")
 	}
 
 	if wr.E != nil {
@@ -92,7 +97,7 @@ func (s *serialS8) Read() (*co2.Readings, error) {
 	case r := <- ch:
 		return r.R, r.E
 	case <-time.After(s.timeout):
-		return nil, errors.New("Read timeout")
+		return nil, errors.New("read timeout")
 	}
 }
 
