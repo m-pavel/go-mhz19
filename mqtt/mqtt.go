@@ -4,6 +4,7 @@ import (
 	"flag"
 	co2 "github.com/m-pavel/go-co2/pkg"
 	"github.com/m-pavel/go-co2/pkg/s8"
+	"time"
 
 	"github.com/m-pavel/go-hassio-mqtt/pkg"
 	"github.com/m-pavel/go-co2/pkg/mhz19"
@@ -31,7 +32,7 @@ func (ts *Co2Service) Init(ctx *ghm.ServiceContext) error {
 	default:
 		panic("Wrong device type " + *ts.dtype)
 	}
-	return ts.d.Open()
+	return ts.d.Open(time.Second * 5)
 }
 
 func (ts Co2Service) Do() (interface{}, error) {

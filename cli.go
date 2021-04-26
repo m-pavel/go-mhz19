@@ -4,6 +4,7 @@ import (
 	"fmt"
 	co22 "github.com/m-pavel/go-co2/pkg"
 	"github.com/m-pavel/go-co2/pkg/s8"
+	"time"
 
 	"flag"
 
@@ -15,6 +16,7 @@ import (
 func main() {
 	device := flag.String("device", "/dev/serial0", "Serial device")
 	dtype := flag.String("type", "mhz19", "mhz19 or s8")
+	timeout := flag.Int64("timeout", 5, "Seconds")
 	flag.Parse()
 
 	var co2d co22.Device
@@ -27,7 +29,7 @@ func main() {
 		panic("Wrong device type " + *dtype)
 	}
 
-	if err := co2d.Open(); err != nil {
+	if err := co2d.Open( time.Duration(*timeout) * time.Second); err != nil {
 		log.Panic(err)
 	}
 	log.Printf("Opened %s", *device)
