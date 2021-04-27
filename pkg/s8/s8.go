@@ -54,26 +54,27 @@ func (s *serialS8) Read() (*co2.Readings, error) {
 		}
 	}()
 
-	var wr *co2.ReadingsResponse
+	{
+		var wr *co2.ReadingsResponse
+		select {
+		case r := <-ch:
+			wr = r
+		case <-time.After(s.timeout):
+			return nil, errors.New("write timeout")
+		}
 
-	select {
-	case r := <-ch:
-		wr = r
-	case <-time.After(s.timeout):
-		return nil, errors.New("write timeout")
+		if wr.E != nil {
+			return nil, wr.E
+		}
 	}
 
-	if wr.E != nil {
-		return nil, wr.E
-	}
-	//s.port.Flush()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(300 * time.Millisecond)
 
 	go func() {
 		sz := 13
 		buffer := make([]byte, sz)
 		if n, err = s.port.Read(buffer); err != nil {
-			wr = &co2.ReadingsResponse{E: err}
+			ch <- &co2.ReadingsResponse{E: err}
 		} else {
 			if n != sz {
 				ch <- &co2.ReadingsResponse{E: errors.New(fmt.Sprintf("Wrong readings (Size %d): %v", n, buffer))}
