@@ -76,8 +76,8 @@ func (s *serialS8) Read() (*co2.Readings, error) {
 		if n, err = s.port.Read(buffer); err != nil {
 			ch <- &co2.ReadingsResponse{E: err}
 		} else {
-			if n != sz {
-				ch <- &co2.ReadingsResponse{E: errors.New(fmt.Sprintf("Wrong readings (Size %d): %v", n, buffer))}
+			if buffer[0] != 0xFE || buffer[1] != 0x04 {
+				ch <- &co2.ReadingsResponse{E: errors.New("Invalid preamble")}
 			} else {
 				length := uint(buffer[2])
 				//status := (uint(buffer[3]) << 8) | uint(buffer[4])
