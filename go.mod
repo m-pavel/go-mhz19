@@ -9,5 +9,5 @@ require (
 	github.com/m-pavel/go-hassio-mqtt v0.0.0-20201117183215-b46b04896acd
 	github.com/sevlyar/go-daemon v0.1.5 // indirect
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
-	golang.org/x/sys v0.0.0-20210305230114-8fe3ee5dd75b // indirect
+	golang.org/x/sys v0.1.0 // indirect
 )
