@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	co22 "github.com/m-pavel/go-co2/pkg"
-	"github.com/m-pavel/go-co2/pkg/s8"
 	"time"
+
+	co2 "github.com/m-pavel/go-co2/pkg/api"
+	"github.com/m-pavel/go-co2/pkg/s8"
 
 	"flag"
 
@@ -19,7 +20,7 @@ func main() {
 	timeout := flag.Int64("timeout", 5, "Seconds")
 	flag.Parse()
 
-	var co2d co22.Device
+	var co2d co2.Device
 	switch *dtype {
 	case "mhz19":
 		co2d = mhz19.NewSerial(*device)
@@ -29,7 +30,7 @@ func main() {
 		panic("Wrong device type " + *dtype)
 	}
 
-	if err := co2d.Open( time.Duration(*timeout) * time.Second); err != nil {
+	if err := co2d.Open(time.Duration(*timeout) * time.Second); err != nil {
 		log.Panic(err)
 	}
 	log.Printf("Opened %s", *device)

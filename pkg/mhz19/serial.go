@@ -1,7 +1,6 @@
 package mhz19
 
 import (
-	co2 "github.com/m-pavel/go-co2/pkg"
 	"io"
 
 	"errors"
@@ -11,6 +10,7 @@ import (
 	"fmt"
 
 	"github.com/jacobsa/go-serial/serial"
+	co2 "github.com/m-pavel/go-co2/pkg/api"
 )
 
 const (
@@ -26,8 +26,8 @@ const (
 )
 
 type serialMhz19 struct {
-	dev  string
-	port io.ReadWriteCloser
+	dev     string
+	port    io.ReadWriteCloser
 	timeout time.Duration
 }
 

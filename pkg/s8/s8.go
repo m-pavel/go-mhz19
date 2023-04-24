@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	co2 "github.com/m-pavel/go-co2/pkg"
+	co2 "github.com/m-pavel/go-co2/pkg/api"
 	"github.com/tarm/serial"
 )
 

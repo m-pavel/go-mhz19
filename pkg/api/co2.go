@@ -8,7 +8,6 @@ type Device interface {
 	Open(timeout time.Duration) error
 	Close() error
 	Read() (*Readings, error)
-
 }
 
 type Readings struct {
@@ -18,7 +17,6 @@ type Readings struct {
 	Ss          int `json:"ss"`
 	UhUl        int `json:"uhul"'`
 }
-
 
 type ReadingsResponse struct {
 	R *Readings
