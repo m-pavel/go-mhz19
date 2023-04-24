@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	ghm.NewExecutor[*co2.Readings]("co2", &producer.Co2Service{}, &ghm.HassioConsumer[*co2.Readings]{}).Main()
+	ghm.NewExecutor[*co2.Readings]("co2", &producer.Co2Service{}, &ghm.ConsoleConsumer[*co2.Readings]{}).Main()
 }

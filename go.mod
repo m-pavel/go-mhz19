@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
-	github.com/m-pavel/go-hassio-mqtt v0.1.0
+	github.com/m-pavel/go-hassio-mqtt v0.1.1
 	github.com/spf13/cobra v1.7.0
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
 )
