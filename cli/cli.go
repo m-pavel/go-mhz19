@@ -9,7 +9,7 @@ import (
 )
 
 func Converter(r *co2.Readings) any {
-	return fmt.Sprintf("CO2 %d ppm\nTemp %d C\n", r.Co2, r.Temperature)
+	return fmt.Sprintf("CO2 %d ppm. Temp %d C.", r.Co2, r.Temperature)
 }
 
 func main() {
