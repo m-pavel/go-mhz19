@@ -12,3 +12,4 @@ build-cli:
 clean:
 		rm -rf co2-cli
 		rm -rf co2-mqtt
+		rm -rf co2-http
