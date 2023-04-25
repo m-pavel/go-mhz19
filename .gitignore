@@ -1,4 +1,5 @@
 co2-cli
 co2-mqtt
+co2-http
 .idea/
 go-co2
